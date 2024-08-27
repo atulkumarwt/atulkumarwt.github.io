@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Kitkat Interruptathon</title>
+      <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+      <style>
+         .image-container {
+         position: relative;
+         width: 100%;
+         }
+         .image-container img { 
+         width: 100%;
+         height: auto;
+         }
+         .video-overlay {
+            top: 0;
+            left: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 10;
+            pointer-events: none; 
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.3s ease-in-out; /* Add transition */
+         }
+         .video-overlay video {
+         width: 100%;
+         height: 100%; 
+         object-fit: cover; 
+         }
+         .video-overlay.show {
+         display: block;
+         opacity: 1;
+         }
+         .image-mapper-shape {
+               fill: rgba(0, 0, 0, 0);
+               }
+               g:hover .image-mapper-shape {
+                    opacity: 20%;
+                    cursor: pointer;
+                }
+      </style>
+   </head>
+   <body>
+      <div class="image-container" id="image-container">
+         <div class="video-overlay" id="video-overlay">
+            <video id="myVideo" muted playsinline preload="auto">
+               <source src="/static/videos/Introducing the Interruptathon_Backpacking_Trip.mp4" type="video/mov">
+               Your browser does not support the video tag.
+            </video>
+         </div>
+         <svg style="width:100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 6912 3456">
+            <image xlink:href="/static/images/Introducing the Interruptathon_Cover_Image.jpg" style="width: 6912px;"></image>
+               <g>
+                  <circle data-video-src="/static/videos/Introducing the Interruptathon_Backpacking_Trip.mp4"  cx="1089.6410256410259" cy="2080.8205128205127" r="256.33639961950047" class="image-mapper-shape" data-index="6"></circle>
+               </g>
+               <g>
+                  <circle data-video-src="/static/videos/Introducing the Interruptathon_OTP.mp4" cx="3859.6923076923076" cy="1542.5641025641025" r="267.8443423258673" class="image-mapper-shape" data-index="12"></circle>
+               </g>
+         </svg>
+      </div>
+      <script>
+        const videoOverlay = document.getElementById('video-overlay');
+        const videoPlayer = document.getElementById('myVideo');
+        const imageContainer = document.getElementById('image-container');
+        const polygons = document.querySelectorAll('.image-mapper-shape');
+        let activePolygon = null;
+         function updateVideo(polygon) {
+             if (polygon === activePolygon) {
+                 // Click on the same polygon: toggle video
+                 if (videoPlayer.paused) {
+                     videoPlayer.play();
+                 } else {
+                     videoPlayer.pause();
+                 }
+                 return;
+             }
+         
+             if (activePolygon) {
+                 videoPlayer.pause();
+             }
+         
+             activePolygon = polygon;
+         
+             if (activePolygon) {
+                 const videoSrc = activePolygon.getAttribute('data-video-src');
+                 videoPlayer.src = videoSrc;
+                 videoPlayer.load();
+                 videoPlayer.play();
+                 videoOverlay.classList.add('show');
+             } else {
+                 videoOverlay.classList.remove('show');
+             }
+         }
+         
+         imageContainer.addEventListener('mouseover', (event) => {
+             let targetPolygon = null;
+             polygons.forEach(polygon => {
+                 if (polygon.contains(event.target)) {
+                     targetPolygon = polygon;
+                 }
+             });
+             updateVideo(targetPolygon);
+         });
+      </script>
+   </body>
+</html>
